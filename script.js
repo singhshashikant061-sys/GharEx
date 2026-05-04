@@ -18,7 +18,7 @@ const registrationNameInput = registrationForm?.querySelector("[name='name']");
 const registrationPhoneInput = registrationForm?.querySelector("[name='phone']");
 const registrationLocationInput = registrationForm?.querySelector("[name='location']");
 const registrationButton = registrationForm?.querySelector("button[type='submit']");
-const API_URL = "http://localhost:3000/api/requests";
+const API_URL = "/api/requests";
 
 const getPhoneDigits = (phone) => String(phone || "").replace(/\D/g, "");
 
@@ -64,7 +64,7 @@ const postServiceRequest = async (payload) => {
     });
   } catch (error) {
     console.log(error);
-    throw new Error("Could not connect to the GharEx server. Please start it with npm start.");
+    throw new Error("Could not connect to the GharEx server. Please try again shortly.");
   }
 
   const responseText = await response.text();
@@ -75,7 +75,7 @@ const postServiceRequest = async (payload) => {
       data = JSON.parse(responseText);
     } catch (error) {
       console.log(error);
-      throw new Error("The request API did not return a valid response. Please start the GharEx server with npm start.");
+      throw new Error("The request API did not return a valid response. Please try again shortly.");
     }
   }
 
