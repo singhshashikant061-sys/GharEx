@@ -3,12 +3,11 @@ require("dns").setDefaultResultOrder("ipv4first");
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
-const crypto = require("crypto");
+const mongoose = require("mongoose");
 
 const PORT = process.env.PORT || 10000;
 const ADMIN_KEY = process.env.ADMIN_KEY || "change-this-admin-key";
-const DATA_DIR = path.join(__dirname, "data");
-const DATA_FILE = path.join(DATA_DIR, "requests.json");
+const MONGODB_URI = process.env.MONGODB_URI;
 
 const allowedStatuses = new Set(["new", "contacted", "in_progress", "completed", "cancelled"]);
 const mimeTypes = {
@@ -22,19 +21,78 @@ const mimeTypes = {
   ".svg": "image/svg+xml"
 };
 
-const ensureDataFile = () => {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-  if (!fs.existsSync(DATA_FILE)) fs.writeFileSync(DATA_FILE, "[]\n");
+const requestSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true, trim: true },
+    phone: { type: String, required: true, trim: true },
+    address: { type: String, trim: true, default: "" },
+    requirement: { type: String, trim: true, default: "" },
+    requestType: { type: String, enum: ["buy", "sell", "quote"], default: "quote" },
+    status: { type: String, enum: [...allowedStatuses], default: "new" },
+    email: { type: String, trim: true, default: "" },
+    location: { type: String, trim: true, default: "" },
+    material: { type: String, trim: true, default: "" },
+    quantity: { type: Number, default: null },
+    customerType: { type: String, trim: true, default: "" },
+    brickType: { type: String, trim: true, default: "" },
+    deliveryLocation: { type: String, trim: true, default: "" },
+    gst: { type: String, trim: true, default: "" },
+    products: { type: String, trim: true, default: "" },
+    message: { type: String, trim: true, default: "" }
+  },
+  { timestamps: true }
+);
+
+const Request = mongoose.model("Request", requestSchema);
+
+const connectMongo = async () => {
+  if (!MONGODB_URI) {
+    throw new Error("MONGODB_URI environment variable is required");
+  }
+
+  if (mongoose.connection.readyState === 1) return;
+
+  await mongoose.connect(MONGODB_URI);
 };
 
-const readRequests = () => {
-  ensureDataFile();
-  return JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
+const formatRequest = (request) => {
+  const item = request.toObject ? request.toObject() : request;
+  const { _id, __v, ...rest } = item;
+  return {
+    id: String(_id),
+    ...rest,
+    createdAt: rest.createdAt instanceof Date ? rest.createdAt.toISOString() : rest.createdAt,
+    updatedAt: rest.updatedAt instanceof Date ? rest.updatedAt.toISOString() : rest.updatedAt
+  };
 };
 
-const writeRequests = (requests) => {
-  ensureDataFile();
-  fs.writeFileSync(DATA_FILE, `${JSON.stringify(requests, null, 2)}\n`);
+const getRequests = async (filters = {}) => {
+  await connectMongo();
+  const query = {};
+  if (filters.status) query.status = filters.status;
+  if (filters.requestType) query.requestType = filters.requestType;
+
+  const requests = await Request.find(query).sort({ createdAt: -1 }).lean();
+  return requests.map(formatRequest);
+};
+
+const saveRequest = async (request) => {
+  await connectMongo();
+  const savedRequest = await Request.create(request);
+  return formatRequest(savedRequest);
+};
+
+const updateRequestStatus = async (id, status) => {
+  await connectMongo();
+  if (!mongoose.Types.ObjectId.isValid(id)) return null;
+
+  const request = await Request.findByIdAndUpdate(
+    id,
+    { status },
+    { new: true, runValidators: true }
+  );
+
+  return request ? formatRequest(request) : null;
 };
 
 const sendJson = (res, statusCode, body) => {
@@ -76,11 +134,14 @@ const buildRequest = (payload) => {
   const requestType = sanitizeText(payload.requestType || payload.type || "quote");
   const quantity = sanitizeNumber(payload.quantity);
   const request = {
-    id: crypto.randomUUID(),
     requestType,
     status: "new",
     name: sanitizeText(payload.name),
     phone: sanitizeText(payload.phone),
+    address: sanitizeText(payload.address || payload.location || payload.deliveryLocation),
+    requirement: sanitizeText(
+      payload.requirement || payload.material || payload.brickType || payload.products || payload.message || requestType
+    ),
     email: sanitizeText(payload.email),
     location: sanitizeText(payload.location),
     material: sanitizeText(payload.material),
@@ -90,9 +151,7 @@ const buildRequest = (payload) => {
     deliveryLocation: sanitizeText(payload.deliveryLocation),
     gst: sanitizeText(payload.gst),
     products: sanitizeText(payload.products),
-    message: sanitizeText(payload.message),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    message: sanitizeText(payload.message)
   };
 
   if (!["buy", "sell", "quote"].includes(request.requestType)) {
@@ -114,7 +173,7 @@ const isAdmin = (req) => req.headers["x-admin-key"] === ADMIN_KEY;
 
 const handleRequestsRoute = async (req, res) => {
   if (req.method === "GET") {
-    return sendJson(res, 200, { requests: readRequests() });
+    return sendJson(res, 200, { requests: await getRequests() });
   }
 
   if (req.method === "POST") {
@@ -122,10 +181,8 @@ const handleRequestsRoute = async (req, res) => {
     const { request, error } = buildRequest(payload);
     if (error) return sendJson(res, 400, { error });
 
-    const requests = readRequests();
-    requests.unshift(request);
-    writeRequests(requests);
-    return sendJson(res, 201, { request });
+    const savedRequest = await saveRequest(request);
+    return sendJson(res, 201, { request: savedRequest });
   }
 
   return sendJson(res, 404, { error: "API route not found" });
@@ -143,9 +200,7 @@ const handleApi = async (req, res, url) => {
 
     const status = url.searchParams.get("status");
     const requestType = url.searchParams.get("type");
-    let requests = readRequests();
-    if (status) requests = requests.filter((request) => request.status === status);
-    if (requestType) requests = requests.filter((request) => request.requestType === requestType);
+    const requests = await getRequests({ status, requestType });
     return sendJson(res, 200, { requests });
   }
 
@@ -159,13 +214,9 @@ const handleApi = async (req, res, url) => {
       return sendJson(res, 400, { error: "status must be new, contacted, in_progress, completed, or cancelled" });
     }
 
-    const requests = readRequests();
-    const request = requests.find((item) => item.id === statusMatch[1]);
+    const request = await updateRequestStatus(statusMatch[1], status);
     if (!request) return sendJson(res, 404, { error: "request not found" });
 
-    request.status = status;
-    request.updatedAt = new Date().toISOString();
-    writeRequests(requests);
     return sendJson(res, 200, { request });
   }
 
