@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register With GharEx</title>
+  <meta name="description" content="Register with GharEx to buy construction materials or sell as a manufacturer partner.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="registration-page">
+  <header class="site-header">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="index.html" aria-label="GharEx home">
+        <span class="brand-text">GharEx</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html#about">About</a>
+        <a href="index.html#contact">Contact</a>
+      </div>
+      <a class="nav-cta" href="https://wa.me/918409734846" target="_blank" rel="noopener">WhatsApp</a>
+    </nav>
+  </header>
+
+  <main class="registration-main">
+    <section class="registration-hero">
+      <div class="registration-copy">
+        <p class="eyebrow dark" id="registrationEyebrow">Register with GharEx</p>
+        <h1 id="registrationTitle">Start your GharEx registration.</h1>
+        <p id="registrationText">Choose whether you want to buy construction materials or sell with GharEx as a manufacturer partner.</p>
+      </div>
+
+      <form class="quote-form registration-form" id="registrationForm">
+        <a class="seller-close" href="index.html" aria-label="Close form">&times;</a>
+        <div class="buyer-form-heading">
+          <h1>Send Your Requirement</h1>
+          <p>We'll get back to you within 12 hours</p>
+        </div>
+        <h1 class="seller-form-title">Sell with us</h1>
+        <label class="registration-type-field">
+          I want to
+          <select name="type" id="registrationType" required>
+            <option value="buy">Buy From GharEx</option>
+            <option value="sell">Sell With GharEx</option>
+          </select>
+        </label>
+        <label class="name-field">
+          Name *
+          <input type="text" name="name" placeholder="Your name" required>
+        </label>
+        <label class="phone-field">
+          Phone *
+          <input type="tel" name="phone" placeholder="Your phone" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" title="Enter a 10 digit phone number" required>
+        </label>
+        <label class="email-field">
+          Email
+          <input type="email" name="email" placeholder="your@email.com" data-seller-required>
+        </label>
+        <label class="location-field seller-location-field">
+          City / location
+          <input type="text" name="location" placeholder="Your city or business location" required data-seller-required>
+        </label>
+        <label class="material-field">
+          Material *
+          <select name="material" required data-buyer-required>
+            <option value="">Select material</option>
+            <option>Red Clay Bricks</option>
+            <option>AAC Blocks</option>
+            <option>Fly Ash Bricks</option>
+            <option>Other Construction Material</option>
+          </select>
+        </label>
+        <label class="quantity-field">
+          Quantity (minimum 3000)
+          <input type="number" name="quantity" min="3000" step="100" required data-buyer-required>
+        </label>
+        <label class="wide-field buyer-location-field">
+          Delivery Location *
+          <select name="deliveryLocation" required data-buyer-required>
+            <option value="">Select location</option>
+            <option>Mohali</option>
+            <option>Chandigarh</option>
+            <option>Kharar</option>
+          </select>
+        </label>
+        <label class="wide-field message-field">
+          Additional Details
+          <textarea name="message" placeholder="Tell us more about your requirements..."></textarea>
+        </label>
+        <label class="wide-field products-field seller-only">
+          What product do you sell?
+          <select name="products" data-seller-required required>
+            <option value="">Products type</option>
+            <option value="red-clay-brick">Red Clay Brick</option>
+            <option value="aac-blocks">AAC Blocks</option>
+          </select>
+        </label>
+        <button class="button primary full" type="submit">Send Requirement</button>
+        <p class="form-message" id="registrationMessage" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GharEx Admin Dashboard</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --accent: #0f766e;
+      --accent-dark: #115e59;
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --text: #102a43;
+      --muted: #627d98;
+      --line: #d9e2ec;
+      --shadow: 0 14px 34px rgba(16, 42, 67, 0.08);
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .page {
+      width: min(1200px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 44px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .title-block h1 {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.15;
+    }
+
+    .title-block p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .refresh-button {
+      border: 0;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #ffffff;
+      cursor: pointer;
+      font-weight: 700;
+      padding: 11px 16px;
+      box-shadow: 0 8px 18px rgba(15, 118, 110, 0.18);
+    }
+
+    .refresh-button:hover {
+      background: var(--accent-dark);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .summary-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .summary-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .summary-card strong {
+      display: block;
+      font-size: 30px;
+      line-height: 1;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 20px 0 14px;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .search-box {
+      min-width: min(100%, 320px);
+    }
+
+    .search-box input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #ffffff;
+      color: var(--text);
+      padding: 11px 13px;
+      box-shadow: 0 8px 18px rgba(16, 42, 67, 0.05);
+    }
+
+    .search-box input:focus {
+      border-color: var(--accent);
+      outline: 3px solid rgba(15, 118, 110, 0.14);
+    }
+
+    .filter-button {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #ffffff;
+      color: #334e68;
+      cursor: pointer;
+      font-weight: 700;
+      padding: 9px 13px;
+    }
+
+    .filter-button.is-active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    .state-message {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 980px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid #edf1f5;
+      padding: 15px 16px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background: #fbfcfe;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .name {
+      font-weight: 800;
+    }
+
+    .subtext {
+      color: var(--muted);
+      display: block;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .badge {
+      border-radius: 999px;
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 6px 10px;
+      text-transform: capitalize;
+      white-space: nowrap;
+    }
+
+    .badge-new {
+      background: #e0f2fe;
+      color: #075985;
+    }
+
+    .badge-contacted {
+      background: #ecfdf3;
+      color: #166534;
+    }
+
+    .badge-in_progress {
+      background: #fff7ed;
+      color: #9a3412;
+    }
+
+    .badge-completed {
+      background: #dcfce7;
+      color: #14532d;
+    }
+
+    .badge-cancelled {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    select {
+      min-width: 138px;
+      border: 1px solid #bcccdc;
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--text);
+      padding: 9px 10px;
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+    }
+
+    .mobile-list {
+      display: none;
+      gap: 12px;
+    }
+
+    .request-card {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .details {
+      display: grid;
+      gap: 10px;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      border-top: 1px solid #edf1f5;
+      padding-top: 10px;
+    }
+
+    .detail-row span:first-child {
+      color: var(--muted);
+      min-width: 120px;
+    }
+
+    .detail-row span:last-child {
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .empty,
+    .error {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      color: var(--muted);
+      padding: 34px;
+      text-align: center;
+    }
+
+    .error {
+      color: #991b1b;
+    }
+
+    @media (max-width: 880px) {
+      .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .controls {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .page {
+        width: min(100% - 24px, 1200px);
+        padding-top: 20px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .title-block h1 {
+        font-size: 25px;
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        display: none;
+      }
+
+      .mobile-list {
+        display: grid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div class="title-block">
+        <h1>GharEx Admin Dashboard</h1>
+        <p>Track customer requests, partner registrations, and lead status.</p>
+      </div>
+      <button class="refresh-button" id="refreshButton" type="button">Refresh</button>
+    </header>
+
+    <section class="summary-grid" aria-label="Request summary">
+      <div class="summary-card">
+        <span>Total Requests</span>
+        <strong id="totalCount">0</strong>
+      </div>
+      <div class="summary-card">
+        <span>New Requests</span>
+        <strong id="newCount">0</strong>
+      </div>
+      <div class="summary-card">
+        <span>Contacted</span>
+        <strong id="contactedCount">0</strong>
+      </div>
+      <div class="summary-card">
+        <span>Completed</span>
+        <strong id="completedCount">0</strong>
+      </div>
+    </section>
+
+    <section class="controls" aria-label="Request filters">
+      <div class="filters" id="filters">
+        <button class="filter-button is-active" type="button" data-status="all">All</button>
+        <button class="filter-button" type="button" data-status="new">New</button>
+        <button class="filter-button" type="button" data-status="contacted">Contacted</button>
+        <button class="filter-button" type="button" data-status="in_progress">In Progress</button>
+        <button class="filter-button" type="button" data-status="completed">Completed</button>
+        <button class="filter-button" type="button" data-status="cancelled">Cancelled</button>
+      </div>
+      <label class="search-box">
+        <input id="searchInput" type="search" placeholder="Search by name or phone" autocomplete="off">
+      </label>
+      <p class="state-message" id="stateMessage">Loading requests...</p>
+    </section>
+
+    <section id="content"></section>
+  </main>
+
+  <script>
+    const API_BASE = "http://localhost:3000";
+    const ADMIN_KEY = "change-this-admin-key";
+    const statuses = ["new", "contacted", "in_progress", "completed", "cancelled"];
+
+    const content = document.querySelector("#content");
+    const stateMessage = document.querySelector("#stateMessage");
+    const refreshButton = document.querySelector("#refreshButton");
+    const filters = document.querySelector("#filters");
+    const searchInput = document.querySelector("#searchInput");
+    const totalCount = document.querySelector("#totalCount");
+    const newCount = document.querySelector("#newCount");
+    const contactedCount = document.querySelector("#contactedCount");
+    const completedCount = document.querySelector("#completedCount");
+
+    let allRequests = [];
+    let activeStatus = "all";
+    let searchTerm = "";
+
+    const escapeHtml = (value) =>
+      String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+    const labelStatus = (status) => String(status || "new").replace("_", " ");
+
+    const formatDate = (value) => {
+      if (!value) return "-";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "-";
+      return date.toLocaleString("en-IN", {
+        dateStyle: "medium",
+        timeStyle: "short"
+      });
+    };
+
+    const getLocation = (request) => request.deliveryLocation || request.location || "-";
+
+    const getMaterial = (request) => request.material || request.brickType || request.products || "-";
+
+    const renderBadge = (status) => {
+      const normalized = statuses.includes(status) ? status : "new";
+      return `<span class="badge badge-${normalized}">${escapeHtml(labelStatus(normalized))}</span>`;
+    };
+
+    const renderStatusSelect = (request) => {
+      const options = statuses
+        .map((status) => {
+          const selected = request.status === status ? "selected" : "";
+          return `<option value="${status}" ${selected}>${labelStatus(status)}</option>`;
+        })
+        .join("");
+
+      return `<select data-id="${escapeHtml(request.id)}" aria-label="Update status for ${escapeHtml(request.name || "request")}">${options}</select>`;
+    };
+
+    const updateSummary = (requests) => {
+      totalCount.textContent = requests.length;
+      newCount.textContent = requests.filter((request) => request.status === "new").length;
+      contactedCount.textContent = requests.filter((request) => request.status === "contacted").length;
+      completedCount.textContent = requests.filter((request) => request.status === "completed").length;
+    };
+
+    const getFilteredRequests = () => {
+      return allRequests.filter((request) => {
+        const matchesStatus = activeStatus === "all" || request.status === activeStatus;
+        const searchableText = `${request.name || ""} ${request.phone || ""}`.toLowerCase();
+        const matchesSearch = !searchTerm || searchableText.includes(searchTerm);
+
+        return matchesStatus && matchesSearch;
+      });
+    };
+
+    const renderTableRows = (requests) =>
+      requests
+        .map(
+          (request) => `
+            <tr>
+              <td>
+                <span class="name">${escapeHtml(request.name || "-")}</span>
+                <span class="subtext">${escapeHtml(request.phone || "-")}</span>
+              </td>
+              <td>${escapeHtml(request.requestType || "-")}</td>
+              <td>${escapeHtml(getMaterial(request))}</td>
+              <td>${escapeHtml(request.quantity ?? "-")}</td>
+              <td>${escapeHtml(getLocation(request))}</td>
+              <td>${renderBadge(request.status)}</td>
+              <td>${escapeHtml(formatDate(request.createdAt))}</td>
+              <td>${renderStatusSelect(request)}</td>
+            </tr>
+          `
+        )
+        .join("");
+
+    const renderCards = (requests) =>
+      requests
+        .map(
+          (request) => `
+            <article class="request-card">
+              <div class="card-head">
+                <div>
+                  <div class="name">${escapeHtml(request.name || "-")}</div>
+                  <span class="subtext">${escapeHtml(request.phone || "-")}</span>
+                </div>
+                ${renderBadge(request.status)}
+              </div>
+              <div class="details">
+                <div class="detail-row"><span>Request Type</span><span>${escapeHtml(request.requestType || "-")}</span></div>
+                <div class="detail-row"><span>Material</span><span>${escapeHtml(getMaterial(request))}</span></div>
+                <div class="detail-row"><span>Quantity</span><span>${escapeHtml(request.quantity ?? "-")}</span></div>
+                <div class="detail-row"><span>Location</span><span>${escapeHtml(getLocation(request))}</span></div>
+                <div class="detail-row"><span>Created Date</span><span>${escapeHtml(formatDate(request.createdAt))}</span></div>
+                <div class="detail-row"><span>Status</span><span>${renderStatusSelect(request)}</span></div>
+              </div>
+            </article>
+          `
+        )
+        .join("");
+
+    const bindStatusDropdowns = () => {
+      content.querySelectorAll("select[data-id]").forEach((select) => {
+        select.addEventListener("change", () => {
+          updateStatus(select.dataset.id, select.value);
+        });
+      });
+    };
+
+    const renderRequests = () => {
+      const requests = getFilteredRequests();
+      stateMessage.textContent = requests.length ? `${requests.length} request(s) shown` : "No requests found.";
+
+      if (!requests.length) {
+        content.innerHTML = '<div class="empty">No requests found.</div>';
+        return;
+      }
+
+      content.innerHTML = `
+        <div class="panel">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name / Phone</th>
+                  <th>Request Type</th>
+                  <th>Material</th>
+                  <th>Quantity</th>
+                  <th>Location</th>
+                  <th>Status</th>
+                  <th>Created Date</th>
+                  <th>Update</th>
+                </tr>
+              </thead>
+              <tbody>${renderTableRows(requests)}</tbody>
+            </table>
+          </div>
+        </div>
+        <div class="mobile-list">${renderCards(requests)}</div>
+      `;
+
+      bindStatusDropdowns();
+    };
+
+    const fetchRequests = async () => {
+      stateMessage.textContent = "Loading requests...";
+      content.innerHTML = "";
+
+      try {
+        const response = await fetch(`${API_BASE}/api/admin/requests`, {
+          headers: {
+            "x-admin-key": ADMIN_KEY
+          }
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Could not load requests");
+        }
+
+        allRequests = data.requests || [];
+        updateSummary(allRequests);
+        renderRequests();
+      } catch (error) {
+        console.log(error);
+        stateMessage.textContent = "Could not load requests.";
+        content.innerHTML = '<div class="error">Could not load requests. Check that the backend is running and the admin key is correct.</div>';
+      }
+    };
+
+    const updateStatus = async (id, status) => {
+      try {
+        const response = await fetch(`${API_BASE}/api/admin/requests/${id}/status`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "x-admin-key": ADMIN_KEY
+          },
+          body: JSON.stringify({ status })
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Could not update status");
+        }
+
+        await fetchRequests();
+      } catch (error) {
+        console.log(error);
+        alert("Status could not be updated");
+      }
+    };
+
+    filters.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-status]");
+      if (!button) return;
+
+      activeStatus = button.dataset.status;
+      filters.querySelectorAll(".filter-button").forEach((filterButton) => {
+        filterButton.classList.toggle("is-active", filterButton === button);
+      });
+      renderRequests();
+    });
+
+    searchInput.addEventListener("input", () => {
+      searchTerm = searchInput.value.trim().toLowerCase();
+      renderRequests();
+    });
+
+    refreshButton.addEventListener("click", fetchRequests);
+    document.addEventListener("DOMContentLoaded", fetchRequests);
+  </script>
+</body>
+</html>
