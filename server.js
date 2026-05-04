@@ -5,7 +5,7 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 
-const PORT = Number(process.env.PORT || 3000);
+const PORT = process.env.PORT || 10000;
 const ADMIN_KEY = process.env.ADMIN_KEY || "change-this-admin-key";
 const DATA_DIR = path.join(__dirname, "data");
 const DATA_FILE = path.join(DATA_DIR, "requests.json");
@@ -210,6 +210,5 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`GharEx server running at http://localhost:${PORT}`);
-  console.log("Admin API key:", ADMIN_KEY);
+  console.log(`Server running on port ${PORT}`);
 });
