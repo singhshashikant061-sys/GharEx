@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>GharEx Admin Dashboard</title>
   <style>
     * {
@@ -25,6 +25,8 @@
       font-family: Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
+      overflow-x: hidden;
+      font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
     }
 
     .page {
@@ -336,6 +338,167 @@
 
       .mobile-list {
         display: grid;
+      }
+    }
+
+    html,
+    body {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    *,
+    *::before,
+    *::after {
+      min-width: 0;
+    }
+
+    body,
+    h1,
+    p,
+    button,
+    input,
+    select,
+    td,
+    th,
+    span,
+    strong {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    button,
+    input,
+    select,
+    table,
+    .page,
+    .topbar,
+    .summary-grid,
+    .controls,
+    .filters,
+    .panel,
+    .table-scroll,
+    .mobile-list,
+    .request-card {
+      max-width: 100%;
+    }
+
+    .page {
+      width: min(75rem, calc(100% - 2rem));
+      padding: clamp(1.25rem, 4vw, 1.75rem) 0 clamp(2rem, 7vw, 2.75rem);
+    }
+
+    .title-block h1 {
+      font-size: clamp(1.55rem, 5vw, 1.875rem);
+    }
+
+    .summary-card strong {
+      font-size: clamp(1.75rem, 6vw, 1.875rem);
+    }
+
+    .refresh-button,
+    .filter-button,
+    select,
+    .search-box input {
+      font-size: clamp(0.92rem, 3vw, 1rem);
+    }
+
+    .search-box {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .table-scroll {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      min-width: 61.25rem;
+    }
+
+    .badge {
+      max-width: 100%;
+      white-space: normal;
+      text-align: center;
+    }
+
+    select {
+      width: 100%;
+      min-width: min(100%, 8.625rem);
+    }
+
+    .card-head,
+    .detail-row {
+      align-items: flex-start;
+    }
+
+    .detail-row span:first-child {
+      flex: 0 1 42%;
+      min-width: 0;
+    }
+
+    .detail-row span:last-child {
+      flex: 1 1 58%;
+      min-width: 0;
+    }
+
+    @media (max-width: 480px) {
+      .page {
+        width: calc(100% - 1rem);
+      }
+
+      .refresh-button,
+      .search-box,
+      .search-box input,
+      .filter-button {
+        width: 100%;
+      }
+
+      .filters {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .card-head,
+      .detail-row {
+        flex-direction: column;
+      }
+
+      .detail-row span:last-child {
+        text-align: left;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .topbar,
+      .controls {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        display: none;
+      }
+
+      .mobile-list {
+        display: grid;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .summary-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .search-box {
+        width: min(20rem, 100%);
       }
     }
   </style>

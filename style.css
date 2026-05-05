@@ -1937,3 +1937,425 @@ body.modal-open {
     right: 20px;
   }
 }
+
+/* Responsive hardening for real-device widths and long user-entered text. */
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  min-width: 0;
+  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+}
+
+img,
+svg,
+video,
+canvas,
+iframe {
+  max-width: 100%;
+}
+
+img,
+video {
+  height: auto;
+}
+
+*,
+*::before,
+*::after {
+  min-width: 0;
+}
+
+body,
+h1,
+h2,
+h3,
+p,
+a,
+span,
+strong,
+label,
+input,
+select,
+textarea,
+button,
+td,
+th {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.site-header,
+.nav,
+.home-center,
+.section,
+.why-inner,
+.contact-section,
+.quote-form,
+.lead-modal-dialog,
+.footer,
+.footer-main,
+.registration-main,
+.registration-hero,
+.registration-copy,
+.thank-you-card {
+  width: 100%;
+  max-width: 100%;
+}
+
+.nav {
+  padding-inline: clamp(1rem, 4vw, 2.75rem);
+}
+
+.brand-logo {
+  font-size: clamp(1.75rem, 7vw, 3.5rem);
+  line-height: 0.95;
+  letter-spacing: clamp(-0.12rem, -0.3vw, -0.04rem);
+}
+
+.brand-accent {
+  letter-spacing: clamp(-0.14rem, -0.34vw, -0.05rem);
+}
+
+.button,
+button,
+input,
+select,
+textarea {
+  max-width: 100%;
+}
+
+.button {
+  min-height: clamp(2.75rem, 2.45rem + 1vw, 3.625rem);
+  padding-inline: clamp(1rem, 4vw, 1.5rem);
+  text-align: center;
+  line-height: 1.2;
+}
+
+.home-hero {
+  min-height: 100svh;
+  padding: clamp(5.5rem, 16vh, 7.5rem) clamp(1rem, 4vw, 1.375rem) clamp(3.75rem, 10vh, 5.125rem);
+}
+
+.home-center {
+  display: grid;
+  justify-items: center;
+  padding: clamp(1.25rem, 5vw, 2.75rem) clamp(0.75rem, 4vw, 2.75rem);
+}
+
+.hero-logo {
+  max-width: 100%;
+  font-size: clamp(3.05rem, 20vw, 10.7rem);
+  line-height: 0.9;
+  letter-spacing: clamp(-0.38rem, -1.45vw, -0.14rem);
+  white-space: normal;
+}
+
+.logo-accent {
+  letter-spacing: clamp(-0.4rem, -1.55vw, -0.15rem);
+}
+
+.logo-leaf {
+  right: clamp(-0.22em, -2vw, -0.08em);
+}
+
+.punchline {
+  max-width: 100%;
+  font-size: clamp(1.55rem, 8vw, 3.8rem);
+  line-height: 1.12;
+  word-spacing: clamp(0.04em, 1vw, 0.16em);
+}
+
+.hero-subtitle {
+  max-width: min(45rem, 100%);
+  font-size: clamp(1rem, 3.8vw, 1.45rem);
+  line-height: 1.5;
+}
+
+.hero-actions,
+.thank-you-actions {
+  width: min(100%, 28rem);
+}
+
+.home-center .button,
+.thank-you-actions .button {
+  width: 100%;
+  max-width: 21rem;
+  min-width: 0;
+}
+
+.logos-strip,
+.section,
+.why-choose,
+.testimonials,
+.contact-section,
+.footer,
+.registration-main,
+.thank-you-main {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+
+.logos-strip span {
+  max-width: 100%;
+  text-align: center;
+}
+
+.trust-grid,
+.testimonial-grid,
+.advantage-grid,
+.quote-form,
+.registration-form,
+.footer-main,
+.registration-hero,
+.contact-section {
+  grid-template-columns: 1fr;
+}
+
+.trust-grid article,
+.testimonial-grid article,
+.advantage-grid article,
+.quote-form,
+.registration-copy {
+  min-height: auto;
+  padding: clamp(1rem, 4.8vw, 1.875rem);
+}
+
+.testimonial-grid p {
+  min-height: 0;
+}
+
+.contact-copy,
+.contact-copy > p:not(.eyebrow) {
+  max-width: 100%;
+}
+
+.contact-copy h2,
+.contact-copy p {
+  text-align: center;
+}
+
+.contact-details {
+  justify-items: center;
+  text-align: center;
+}
+
+.quote-form input,
+.quote-form select,
+.quote-form textarea,
+.lead-modal-form input,
+.lead-modal-form textarea {
+  min-height: clamp(3.25rem, 11vw, 3.75rem);
+  padding-inline: clamp(0.875rem, 4vw, 1.25rem);
+  font-size: clamp(1rem, 3.4vw, 1.125rem);
+}
+
+.quote-trust span,
+.lead-modal-trust span {
+  max-width: 100%;
+}
+
+.lead-modal {
+  padding: max(0.875rem, env(safe-area-inset-top)) max(0.875rem, env(safe-area-inset-right)) max(0.875rem, env(safe-area-inset-bottom)) max(0.875rem, env(safe-area-inset-left));
+}
+
+.lead-modal-dialog {
+  max-height: calc(100svh - 1.75rem);
+}
+
+.footer-main {
+  gap: clamp(1.75rem, 6vw, 3.5rem);
+}
+
+.footer-logo,
+.thank-you-card h1,
+.registration-copy h1,
+.seller-mode .seller-form-title {
+  line-height: 1.08;
+}
+
+.registration-main,
+.thank-you-main {
+  min-height: 100svh;
+  padding-top: clamp(5.75rem, 15vh, 7.75rem);
+  padding-bottom: clamp(3rem, 8vh, 4.5rem);
+}
+
+.buyer-mode .registration-main,
+.seller-mode .registration-main {
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+}
+
+.buyer-mode .registration-form {
+  grid-template-columns: 1fr;
+  gap: clamp(1rem, 4vw, 1.5rem);
+  padding: clamp(1.5rem, 6vw, 2.625rem);
+}
+
+.buyer-mode .buyer-form-heading {
+  padding-right: clamp(2rem, 9vw, 3rem);
+}
+
+.buyer-mode .quote-form input,
+.buyer-mode .quote-form select,
+.buyer-mode .quote-form textarea,
+.seller-mode .quote-form input,
+.seller-mode .quote-form select,
+.seller-mode .quote-form textarea {
+  font-size: clamp(1rem, 3.5vw, 1.18rem);
+}
+
+.seller-close,
+.buyer-mode .seller-close {
+  right: clamp(0.875rem, 4vw, 2.25rem);
+}
+
+.seller-mode .seller-close {
+  top: -2rem;
+  right: 0;
+}
+
+.seller-mode .registration-form label:not(.products-field)::after {
+  right: 0;
+}
+
+.seller-mode .products-field::before {
+  left: min(6.625rem, 75%);
+}
+
+@media (max-width: 480px) {
+  .nav {
+    min-height: 4rem;
+    padding-block: 0.75rem;
+  }
+
+  .hero-logo {
+    font-size: clamp(2.85rem, 18vw, 4rem);
+    letter-spacing: clamp(-0.22rem, -1vw, -0.12rem);
+  }
+
+  .logo-accent {
+    letter-spacing: clamp(-0.24rem, -1.1vw, -0.13rem);
+  }
+
+  .punchline {
+    font-size: clamp(1.4rem, 7.5vw, 2rem);
+  }
+
+  .hero-actions,
+  .thank-you-actions,
+  .button {
+    width: 100%;
+  }
+
+  .home-center .button,
+  .thank-you-actions .button,
+  .quote-form .button.primary,
+  .lead-modal-form .button.primary {
+    max-width: 100%;
+  }
+
+  .why-title,
+  .testimonials-heading h2,
+  .contact-copy h2 {
+    font-size: clamp(2rem, 10vw, 3rem);
+  }
+
+  .lead-modal-header {
+    padding-right: 2.75rem;
+  }
+
+  .buyer-mode .buyer-form-heading h1 {
+    font-size: clamp(1.45rem, 7vw, 1.85rem);
+  }
+}
+
+@media (max-width: 768px) {
+  .site-header {
+    background: rgba(16, 38, 63, 0.95);
+  }
+
+  .section {
+    padding-top: clamp(3.5rem, 10vw, 5rem);
+    padding-bottom: clamp(3.5rem, 10vw, 5rem);
+  }
+
+  .home-center::before {
+    inset: -0.5rem;
+  }
+
+  .contact-section {
+    gap: clamp(1.75rem, 7vw, 2.75rem);
+  }
+
+  .footer-bottom {
+    justify-items: start;
+    text-align: left;
+  }
+}
+
+@media (min-width: 769px) {
+  .button {
+    width: auto;
+  }
+
+  .home-center .button,
+  .thank-you-actions .button {
+    width: auto;
+    min-width: 11.5rem;
+  }
+
+  .quote-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .nav {
+    max-width: 96.25rem;
+  }
+
+  .section,
+  .why-inner,
+  .registration-hero {
+    max-width: 73.75rem;
+  }
+
+  .why-choose,
+  .testimonials,
+  .contact-section {
+    max-width: none;
+  }
+
+  .trust-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .testimonial-grid,
+  .advantage-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .contact-section,
+  .registration-hero {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+
+  .footer-main {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr) minmax(0, 0.8fr);
+  }
+
+  .buyer-mode .registration-hero,
+  .seller-mode .registration-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .buyer-mode .registration-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
