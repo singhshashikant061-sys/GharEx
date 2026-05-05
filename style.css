@@ -71,10 +71,10 @@ a {
 .brand-logo {
   position: relative;
   color: var(--white);
-  font-family: Inter, Poppins, Montserrat, Arial, Helvetica, sans-serif;
+  font-family: Poppins, Montserrat, Inter, Arial, Helvetica, sans-serif;
   font-size: clamp(2.625rem, 4vw, 3.5rem);
   font-weight: 900;
-  line-height: 0.9;
+  line-height: 0.82;
   letter-spacing: -2px;
   text-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
   white-space: nowrap;
@@ -92,19 +92,31 @@ a {
 .brand-accent {
   color: #00c46a;
   font-weight: 950;
-  letter-spacing: -2.5px;
+  letter-spacing: -3px;
 }
 
 .brand-logo sup {
   position: relative;
-  top: -0.68em;
-  margin-left: 3px;
+  top: -1.08em;
+  margin-left: 4px;
   color: #ffffff;
-  font-size: 0.2em;
+  font-size: 0.18em;
   font-weight: 900;
   letter-spacing: 0;
   line-height: 1;
   text-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+}
+
+.brand-leaf {
+  position: absolute;
+  right: -0.48em;
+  top: 0.18em;
+  width: 0.42em;
+  height: 0.22em;
+  border-radius: 100% 0 100% 0;
+  background: #00c46a;
+  transform: rotate(-15deg) skew(-6deg);
+  box-shadow: 0 4px 10px rgba(0, 196, 106, 0.22);
 }
 
 .nav-links {
@@ -345,27 +357,13 @@ p {
   max-width: min(920px, 100%);
   margin: 0 auto 14px;
   color: var(--white);
-  font-family: Arial Black, Arial, Helvetica, sans-serif;
-  font-size: clamp(4.8rem, 12.4vw, 10.2rem);
-  font-weight: 950;
-  line-height: 0.82;
-  letter-spacing: -0.075em;
-  text-shadow: 0 18px 42px rgba(0, 0, 0, 0.38);
+  font-family: Poppins, Montserrat, Inter, Arial, Helvetica, sans-serif;
+  font-size: clamp(5.1rem, 12.8vw, 10.7rem);
+  font-weight: 900;
+  line-height: 0.78;
+  letter-spacing: -0.095em;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
   white-space: nowrap;
-}
-
-.hero-logo::after {
-  content: "";
-  position: absolute;
-  right: -0.18em;
-  top: 0.04em;
-  width: 0.32em;
-  height: 0.18em;
-  border-radius: 0.035em;
-  background: linear-gradient(90deg, var(--green) 0 46%, transparent 46% 54%, var(--green) 54%);
-  box-shadow: 0 0.2em 0 var(--green-dark);
-  transform: skew(-10deg);
-  transform-origin: center;
 }
 
 .logo-main,
@@ -374,15 +372,38 @@ p {
 }
 
 .logo-main {
-  color: var(--white);
+  color: #ffffff;
 }
 
 .logo-accent {
-  color: var(--green);
-  letter-spacing: -0.085em;
-  text-shadow:
-    0 16px 38px rgba(0, 0, 0, 0.38),
-    0 0 24px rgba(0, 166, 106, 0.28);
+  color: #00c46a;
+  font-weight: 950;
+  letter-spacing: -0.105em;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.hero-logo sup {
+  position: relative;
+  top: -1.08em;
+  margin-left: 0.1em;
+  color: #ffffff;
+  font-size: 0.18em;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.logo-leaf {
+  position: absolute;
+  right: -0.28em;
+  top: 0.11em;
+  width: 0.52em;
+  height: 0.25em;
+  border-radius: 100% 0 100% 0;
+  background: #00c46a;
+  transform: rotate(-15deg) skew(-6deg);
+  box-shadow: 0 10px 18px rgba(0, 196, 106, 0.22);
 }
 
 h2 {
@@ -1684,7 +1705,7 @@ body.modal-open {
   }
 
   .brand-accent {
-    letter-spacing: -2px;
+    letter-spacing: -2.3px;
   }
 
   .nav-links {
@@ -1736,13 +1757,18 @@ body.modal-open {
   }
 
   .brand-accent {
-    letter-spacing: -1.4px;
+    letter-spacing: -1.6px;
   }
 
   .brand-logo sup {
-    top: -0.62em;
+    top: -1em;
     margin-left: 2px;
     font-size: 0.19em;
+  }
+
+  .brand-leaf {
+    right: -0.42em;
+    top: 0.16em;
   }
 
   .nav-cta {
@@ -1756,8 +1782,25 @@ body.modal-open {
   }
 
   .hero-logo {
-    font-size: clamp(3.45rem, 17vw, 4.85rem);
-    letter-spacing: -0.07em;
+    font-size: clamp(3.35rem, 16.5vw, 4.75rem);
+    letter-spacing: -0.085em;
+  }
+
+  .logo-accent {
+    letter-spacing: -0.095em;
+  }
+
+  .hero-logo sup {
+    top: -1em;
+    margin-left: 0.08em;
+    font-size: 0.17em;
+  }
+
+  .logo-leaf {
+    right: -0.22em;
+    top: 0.12em;
+    width: 0.44em;
+    height: 0.22em;
   }
 
   .home-center {
