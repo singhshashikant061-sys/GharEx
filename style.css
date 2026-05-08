@@ -108,15 +108,7 @@ a {
 }
 
 .brand-leaf {
-  position: absolute;
-  right: -0.48em;
-  top: 0.18em;
-  width: 0.42em;
-  height: 0.22em;
-  border-radius: 100% 0 100% 0;
-  background: #00c46a;
-  transform: rotate(-15deg) skew(-6deg);
-  box-shadow: 0 4px 10px rgba(0, 196, 106, 0.22);
+  display: none;
 }
 
 .nav-links {
@@ -395,15 +387,7 @@ p {
 }
 
 .logo-leaf {
-  position: absolute;
-  right: -0.28em;
-  top: 0.11em;
-  width: 0.52em;
-  height: 0.25em;
-  border-radius: 100% 0 100% 0;
-  background: #00c46a;
-  transform: rotate(-15deg) skew(-6deg);
-  box-shadow: 0 10px 18px rgba(0, 196, 106, 0.22);
+  display: none;
 }
 
 h2 {
