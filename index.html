@@ -27,12 +27,12 @@
   <main id="top">
     <section class="hero home-hero" aria-label="GharEx home">
       <div class="hero-slideshow" aria-hidden="true">
+        <div class="hero-slide" style="--hero-image: url('https://commons.wikimedia.org/wiki/Special:FilePath/Building_a_house_with_bricks.jpg');"></div>
         <div class="hero-slide" style="--hero-image: url('https://commons.wikimedia.org/wiki/Special:FilePath/Brick_laying20070718.jpg');"></div>
-        <div class="hero-slide" style="--hero-image: url('https://commons.wikimedia.org/wiki/Special:FilePath/-2022-05-12_Construction_of_a_brick_and_flint_house,_Northrepps,_England.JPG');"></div>
-        <div class="hero-slide" style="--hero-image: url('https://commons.wikimedia.org/wiki/Special:FilePath/Brick_side_wall_of_building_under_construction_(38222954221).jpg');"></div>
-        <div class="hero-slide" style="--hero-image: url('https://commons.wikimedia.org/wiki/Special:FilePath/-2021-01-22_Cavity_wall_construction,_Trimingham,_Norfolk_(5).JPG');"></div>
-        <div class="hero-slide" style="--hero-image: url('https://commons.wikimedia.org/wiki/Special:FilePath/Red_brick_wall_(Unsplash).jpg');"></div>
-        <div class="hero-slide" style="--hero-image: url('https://commons.wikimedia.org/wiki/Special:FilePath/Red_brick_texture_house_wall.jpg');"></div>
+        <div class="hero-slide" style="--hero-image: url('https://commons.wikimedia.org/wiki/Special:FilePath/Brick_and_block_laying.jpg');"></div>
+        <div class="hero-slide" style="--hero-image: url('https://commons.wikimedia.org/wiki/Special:FilePath/Civil_construction.jpg');"></div>
+        <div class="hero-slide" style="--hero-image: url('https://commons.wikimedia.org/wiki/Special:FilePath/House_Construction_01.jpg');"></div>
+        <div class="hero-slide" style="--hero-image: url('https://commons.wikimedia.org/wiki/Special:FilePath/HouseUnderConstruction.jpg');"></div>
       </div>
 
       <div class="home-center">
@@ -41,7 +41,7 @@
         </h1>
         <p class="punchline">Click. Order. <span>Build.</span></p>
         <span class="hero-divider"></span>
-        <p class="hero-subtitle">India's trusted one-stop shop for brick and AAC block supply.</p>
+        <p class="hero-subtitle">India's trusted one-stop shop for bricks, cement, and sand supply.</p>
         <div class="hero-actions">
           <a class="button primary" href="#quote-modal" data-modal-open>Buy From Us</a>
           <a class="button secondary" href="registration.html?type=sell">Sell With Us</a>
@@ -177,13 +177,25 @@
           <input type="text" name="location" placeholder="City or project location" aria-label="City or project location" required>
         </div>
         <div class="form-field wide-field">
-          <select name="brickType" aria-label="Requirement">
-            <option value="">Requirement</option>
-            <option>Red Clay Bricks</option>
-            <option>Fly Ash Bricks</option>
-            <option>AAC Blocks</option>
-            <option>Not sure yet</option>
-          </select>
+          <fieldset class="product-checks" aria-label="Select products">
+            <legend>Requirement</legend>
+            <label>
+              <input type="checkbox" data-product-all>
+              <span>All Products</span>
+            </label>
+            <label>
+              <input type="checkbox" name="products" value="Red Clay Bricks (मिट्टी बाली ईट)" data-product-option>
+              <span>Red Clay Bricks (मिट्टी बाली ईट)</span>
+            </label>
+            <label>
+              <input type="checkbox" name="products" value="Cement" data-product-option>
+              <span>Cement</span>
+            </label>
+            <label>
+              <input type="checkbox" name="products" value="Sand (बालू)" data-product-option>
+              <span>Sand (बालू)</span>
+            </label>
+          </fieldset>
         </div>
         <button class="button primary full" type="submit">Get Price Quote</button>
         <div class="quote-trust" aria-label="GharEx quote benefits">
@@ -209,6 +221,25 @@
         <input type="text" name="name" placeholder="Your name" aria-label="Your name" required>
         <input type="tel" name="phone" placeholder="Your phone number" aria-label="Your phone number" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" title="Enter a 10 digit phone number" required>
         <input type="text" name="location" placeholder="City or project location" aria-label="City or project location" required>
+        <fieldset class="product-checks" aria-label="Select products">
+          <legend>Requirement</legend>
+          <label>
+            <input type="checkbox" data-product-all>
+            <span>All Products</span>
+          </label>
+          <label>
+            <input type="checkbox" name="products" value="Red Clay Bricks (मिट्टी बाली ईट)" data-product-option>
+            <span>Red Clay Bricks (मिट्टी बाली ईट)</span>
+          </label>
+          <label>
+            <input type="checkbox" name="products" value="Cement" data-product-option>
+            <span>Cement</span>
+          </label>
+          <label>
+            <input type="checkbox" name="products" value="Sand (बालू)" data-product-option>
+            <span>Sand (बालू)</span>
+          </label>
+        </fieldset>
         <textarea name="message" placeholder="Requirement" aria-label="Requirement"></textarea>
         <button class="button primary full" type="submit">Get Price Quote</button>
         <div class="lead-modal-trust" aria-label="GharEx quote benefits">
@@ -259,7 +290,7 @@
 
     <div class="footer-bottom">
       <p>&copy; 2026 <strong>GharEx</strong>. All Rights Reserved.</p>
-      <p>Built for transparent brick and AAC block supply.</p>
+      <p>Built for transparent bricks, cement, and sand supply.</p>
     </div>
   </footer>
 

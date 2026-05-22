@@ -21,6 +21,32 @@ const registrationButton = registrationForm?.querySelector("button[type='submit'
 const API_URL = "/api/requests";
 
 const getPhoneDigits = (phone) => String(phone || "").replace(/\D/g, "");
+const getSelectedProducts = (form) => {
+  return Array.from(form.querySelectorAll("[name='products']:checked"))
+    .map((input) => input.value.trim())
+    .filter(Boolean)
+    .join(", ");
+};
+
+const setupProductChecks = (form) => {
+  if (!form) return;
+
+  const allProducts = form.querySelector("[data-product-all]");
+  const productOptions = Array.from(form.querySelectorAll("[data-product-option]"));
+
+  allProducts?.addEventListener("change", () => {
+    productOptions.forEach((option) => {
+      option.checked = allProducts.checked;
+    });
+  });
+
+  productOptions.forEach((option) => {
+    option.addEventListener("change", () => {
+      if (!allProducts) return;
+      allProducts.checked = productOptions.every((productOption) => productOption.checked);
+    });
+  });
+};
 
 const validateRequestPayload = (payload, options = {}) => {
   const name = payload.name?.trim();
@@ -127,6 +153,7 @@ leadModalForm?.addEventListener("submit", async (event) => {
   const formData = new FormData(leadModalForm);
   const name = formData.get("name")?.toString().trim() || "";
   const location = formData.get("location")?.toString().trim();
+  const products = getSelectedProducts(leadModalForm);
 
   try {
     const payload = validateRequestPayload({
@@ -134,6 +161,9 @@ leadModalForm?.addEventListener("submit", async (event) => {
       name,
       phone: formData.get("phone")?.toString().trim(),
       location,
+      material: products,
+      brickType: products,
+      products,
       message: formData.get("message")?.toString().trim()
     });
 
@@ -153,7 +183,7 @@ quoteForm?.addEventListener("submit", async (event) => {
   const formData = new FormData(quoteForm);
   const name = formData.get("name")?.toString().trim() || "";
   const location = formData.get("location")?.toString().trim();
-  const material = formData.get("material")?.toString().trim() || formData.get("brickType")?.toString().trim();
+  const material = getSelectedProducts(quoteForm) || formData.get("material")?.toString().trim() || formData.get("brickType")?.toString().trim();
   const quantity = formData.get("quantity")?.toString().trim();
 
   try {
@@ -176,6 +206,9 @@ quoteForm?.addEventListener("submit", async (event) => {
     formMessage.textContent = error.message;
   }
 });
+
+setupProductChecks(quoteForm);
+setupProductChecks(leadModalForm);
 
 const updateRegistrationCopy = (type) => {
   if (!registrationTitle || !registrationText) return;

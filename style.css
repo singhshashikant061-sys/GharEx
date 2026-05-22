@@ -916,6 +916,59 @@ h3 {
   resize: vertical;
 }
 
+.product-checks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+  margin: 0;
+  padding: 14px;
+  border: 1px solid #d9e1ea;
+  border-radius: 12px;
+  background: #fbfcfe;
+}
+
+.product-checks legend {
+  padding: 0 6px;
+  color: #667085;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.quote-form .product-checks label,
+.lead-modal-form .product-checks label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 42px;
+  padding: 9px 10px;
+  border: 1px solid #e4e9f0;
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--ink);
+  font-size: 0.94rem;
+  font-weight: 800;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.quote-form .product-checks input,
+.lead-modal-form .product-checks input {
+  width: 18px;
+  height: 18px;
+  min-height: 0;
+  flex: 0 0 18px;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--orange);
+  box-shadow: none;
+}
+
+.product-checks label:has(input:checked) {
+  border-color: rgba(239, 125, 34, 0.42);
+  background: #fff7f0;
+}
+
 .quote-form input:focus,
 .quote-form select:focus,
 .quote-form textarea:focus {
@@ -1098,6 +1151,10 @@ body.modal-open {
   border-color: var(--orange);
   background: var(--white);
   box-shadow: 0 0 0 4px rgba(239, 125, 34, 0.14);
+}
+
+.lead-modal-form .product-checks {
+  grid-template-columns: 1fr 1fr;
 }
 
 .lead-modal-form .button.primary {
@@ -2192,6 +2249,24 @@ textarea {
 .seller-mode .quote-form select,
 .seller-mode .quote-form textarea {
   font-size: clamp(1rem, 3.5vw, 1.18rem);
+}
+
+.buyer-mode .quote-form .product-checks input,
+.seller-mode .quote-form .product-checks input,
+.quote-form .product-checks input,
+.lead-modal-form .product-checks input {
+  width: 18px;
+  height: 18px;
+  min-height: 0;
+  padding: 0;
+  font-size: initial;
+}
+
+@media (max-width: 540px) {
+  .product-checks,
+  .lead-modal-form .product-checks {
+    grid-template-columns: 1fr;
+  }
 }
 
 .seller-close,
