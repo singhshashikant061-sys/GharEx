@@ -5,6 +5,15 @@ const leadModalForm = document.querySelector("#leadModalForm");
 const leadModalMessage = document.querySelector("#leadModalMessage");
 const modalOpenButtons = document.querySelectorAll("[data-modal-open]");
 const modalCloseButtons = document.querySelectorAll("[data-modal-close]");
+const priceCompareModal = document.querySelector("#price-compare-modal");
+const priceCompareOpenButtons = document.querySelectorAll("[data-price-compare-open]");
+const priceCompareCloseButtons = document.querySelectorAll("[data-price-compare-close]");
+const priceCompareForm = document.querySelector("#priceComparePhoneForm");
+const priceCompareMessage = document.querySelector("#priceCompareMessage");
+const priceSort = document.querySelector("#priceSort");
+const brickGradeFilter = document.querySelector("#brickGradeFilter");
+const topRatedFilter = document.querySelector("#topRatedFilter");
+const manufacturerPriceList = document.querySelector("#manufacturerPriceList");
 const registrationForm = document.querySelector("#registrationForm");
 const registrationType = document.querySelector("#registrationType");
 const registrationTitle = document.querySelector("#registrationTitle");
@@ -19,6 +28,16 @@ const registrationPhoneInput = registrationForm?.querySelector("[name='phone']")
 const registrationLocationInput = registrationForm?.querySelector("[name='location']");
 const registrationButton = registrationForm?.querySelector("button[type='submit']");
 const API_URL = "/api/requests";
+let verifiedPriceComparePhone = "";
+let verifiedPriceCompareName = "";
+const manufacturerPrices = [
+  { name: "Guddu Singh Bricks", location: "Mohali", brickType: "Red Clay Bricks", grade: "1", price: 8400, rating: 4.8, unit: "per 1000 bricks" },
+  { name: "Chandigarh Brick Works", location: "Chandigarh", brickType: "Red Clay Bricks", grade: "2", price: 7600, rating: 4.5, unit: "per 1000 bricks" },
+  { name: "Punjab Construction Bricks", location: "Kharar", brickType: "Machine Made Bricks", grade: "1", price: 8900, rating: 4.9, unit: "per 1000 bricks" },
+  { name: "Tricity Brick Suppliers", location: "Zirakpur", brickType: "Wire Cut Bricks", grade: "1", price: 9200, rating: 4.7, unit: "per 1000 bricks" },
+  { name: "Mohali Red Brick Depot", location: "Mohali", brickType: "Red Clay Bricks", grade: "3", price: 6800, rating: 4.2, unit: "per 1000 bricks" },
+  { name: "North India Brick House", location: "Panchkula", brickType: "Machine Made Bricks", grade: "2", price: 7950, rating: 4.6, unit: "per 1000 bricks" }
+];
 
 const getPhoneDigits = (phone) => String(phone || "").replace(/\D/g, "");
 const getSelectedProducts = (form) => {
@@ -130,6 +149,95 @@ const closeLeadModal = () => {
   document.body.classList.remove("modal-open");
 };
 
+const setPriceCompareStep = (stepName) => {
+  priceCompareForm?.querySelectorAll("[data-verify-step]").forEach((step) => {
+    step.classList.toggle("is-active", step.dataset.verifyStep === stepName);
+  });
+};
+
+const openPriceCompareModal = () => {
+  if (!priceCompareModal) return;
+  priceCompareModal.classList.add("is-open");
+  priceCompareModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  priceCompareForm?.reset();
+  verifiedPriceComparePhone = "";
+  verifiedPriceCompareName = "";
+  setPriceCompareStep("phone");
+  if (priceSort) priceSort.value = "low-high";
+  if (brickGradeFilter) brickGradeFilter.value = "all";
+  if (topRatedFilter) topRatedFilter.checked = false;
+  renderManufacturerPrices();
+  if (priceCompareMessage) priceCompareMessage.textContent = "";
+  window.setTimeout(() => {
+    priceCompareForm?.querySelector("[name='name']")?.focus();
+  }, 120);
+};
+
+const closePriceCompareModal = () => {
+  if (!priceCompareModal) return;
+  priceCompareModal.classList.remove("is-open");
+  priceCompareModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+};
+
+const formatPrice = (price) =>
+  new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 2
+  }).format(price);
+
+const renderManufacturerPrices = () => {
+  if (!manufacturerPriceList) return;
+
+  const sortOrder = priceSort?.value || "low-high";
+  const selectedGrade = brickGradeFilter?.value || "all";
+  const showTopRated = Boolean(topRatedFilter?.checked);
+
+  const prices = manufacturerPrices
+    .filter((item) => selectedGrade === "all" || item.grade === selectedGrade)
+    .filter((item) => !showTopRated || item.rating >= 4.7)
+    .sort((a, b) => {
+      return sortOrder === "high-low" ? b.price - a.price : a.price - b.price;
+    });
+
+  if (!prices.length) {
+    manufacturerPriceList.innerHTML = '<p class="compare-empty">No manufacturer prices found for this selection.</p>';
+    return;
+  }
+
+  manufacturerPriceList.innerHTML = prices
+    .map(
+      (item) => `
+        <article class="manufacturer-card">
+          <div>
+            <h4>${item.name}</h4>
+            <p>${item.location} &middot; ${item.brickType} &middot; ${item.rating}/5 rated</p>
+          </div>
+          <div class="manufacturer-price">
+            <strong>${formatPrice(item.price)}</strong>
+            <span>${item.unit}</span>
+          </div>
+          <span class="grade-badge">No. ${item.grade} Grade</span>
+          <button class="manufacturer-buy" type="button" data-manufacturer="${item.name}">Buy</button>
+        </article>
+      `
+    )
+    .join("");
+
+  manufacturerPriceList.querySelectorAll("[data-manufacturer]").forEach((button) => {
+    button.addEventListener("click", () => {
+      closePriceCompareModal();
+      openLeadModal();
+      const messageBox = leadModalForm?.querySelector("[name='message']");
+      if (messageBox) {
+        messageBox.value = `I want to buy bricks from ${button.dataset.manufacturer}.`;
+      }
+    });
+  });
+};
+
 modalOpenButtons.forEach((button) => {
   button.addEventListener("click", (event) => {
     event.preventDefault();
@@ -141,10 +249,53 @@ modalCloseButtons.forEach((button) => {
   button.addEventListener("click", closeLeadModal);
 });
 
+priceCompareOpenButtons.forEach((button) => {
+  button.addEventListener("click", (event) => {
+    event.preventDefault();
+    openPriceCompareModal();
+  });
+});
+
+priceCompareCloseButtons.forEach((button) => {
+  button.addEventListener("click", closePriceCompareModal);
+});
+
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && leadModal?.classList.contains("is-open")) {
     closeLeadModal();
   }
+
+  if (event.key === "Escape" && priceCompareModal?.classList.contains("is-open")) {
+    closePriceCompareModal();
+  }
+});
+
+priceCompareForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const formData = new FormData(priceCompareForm);
+  const name = formData.get("name")?.toString().trim() || "";
+  const phoneDigits = getPhoneDigits(formData.get("phone"));
+
+  if (!name) {
+    priceCompareMessage.textContent = "Name is required.";
+    return;
+  }
+
+  if (!/^\d{10}$/.test(phoneDigits)) {
+    priceCompareMessage.textContent = "Enter a valid 10 digit mobile number.";
+    return;
+  }
+
+  verifiedPriceCompareName = name;
+  verifiedPriceComparePhone = phoneDigits;
+  priceCompareMessage.textContent = "";
+  renderManufacturerPrices();
+  setPriceCompareStep("compare");
+});
+
+[priceSort, brickGradeFilter, topRatedFilter].forEach((control) => {
+  control?.addEventListener("change", renderManufacturerPrices);
 });
 
 leadModalForm?.addEventListener("submit", async (event) => {
