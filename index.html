@@ -256,16 +256,16 @@
   <div class="verify-modal" id="price-compare-modal" aria-hidden="true">
     <div class="verify-modal-backdrop" data-price-compare-close></div>
     <section class="verify-modal-dialog" role="dialog" aria-modal="true" aria-label="Price compare verification">
+      <button class="verify-modal-back" type="button" id="priceCompareBack" aria-label="Go back">&larr;</button>
       <button class="verify-modal-close" type="button" data-price-compare-close aria-label="Close price compare verification">&times;</button>
 
-      <form class="verify-form" id="priceComparePhoneForm">
-        <div class="verify-step is-active" data-verify-step="phone">
-          <input type="text" name="name" placeholder="Your name" aria-label="Your name" required>
-          <input type="tel" name="phone" placeholder="Enter 10 digit mobile number" aria-label="Mobile number" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" title="Enter a 10 digit mobile number" required>
-          <button class="button primary full" type="submit">Submit</button>
-        </div>
+      <div class="verify-modal-header">
+        <h2>Buy Bricks From <span>Verified Manufacturers</span></h2>
+        <p>Enter your basic details to compare live manufacturer rates, grade, and material price.</p>
+      </div>
 
-        <div class="verify-step" data-verify-step="compare">
+      <form class="verify-form" id="priceComparePhoneForm">
+        <div class="verify-step is-active" data-verify-step="compare">
           <div class="compare-controls" aria-label="Price compare filters">
             <label>
               <span>Sort by</span>
@@ -290,6 +290,71 @@
           </div>
 
           <div class="manufacturer-list" id="manufacturerPriceList" aria-live="polite"></div>
+        </div>
+
+        <div class="verify-step" data-verify-step="order">
+          <div class="order-summary" aria-label="Selected manufacturer order details">
+            <h3 id="orderManufacturerName">Manufacturer Name</h3>
+            <div class="order-facts">
+              <span>Grade: <strong id="orderGrade">-</strong></span>
+              <span>Rate: <strong id="orderRate">-</strong></span>
+              <span>Delivery Charges: <strong id="orderDeliveryCharge">Not included</strong></span>
+            </div>
+          </div>
+
+          <label class="order-quantity-field">
+            <span>Quantity</span>
+            <input type="number" id="orderQuantity" name="orderQuantity" placeholder="Enter quantity in bricks" min="3000" step="1" inputmode="numeric">
+          </label>
+
+          <div class="order-address-fields" aria-label="Delivery address details">
+            <label>
+              <span>Name</span>
+              <input type="text" name="orderCustomerName" placeholder="Enter your name" autocomplete="name">
+            </label>
+            <label>
+              <span>Mobile No.</span>
+              <input type="tel" name="orderCustomerPhone" placeholder="Enter 10 digit mobile number" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" autocomplete="tel">
+            </label>
+            <label>
+              <span>City</span>
+              <input type="text" name="orderCustomerCity" placeholder="Enter city" autocomplete="address-level2">
+            </label>
+            <label class="order-full-address">
+              <span>Full Address</span>
+              <textarea name="orderCustomerAddress" placeholder="House number, street, landmark, pincode" autocomplete="street-address"></textarea>
+            </label>
+          </div>
+
+          <p class="order-address-note">Note: No order is confirmed without entering the address details.</p>
+
+          <div class="order-total-box" aria-live="polite">
+            <div>
+              <span>Material Price</span>
+              <strong id="orderSubtotal">-</strong>
+            </div>
+            <div>
+              <span>Delivery Charges</span>
+              <strong id="orderDeliveryTotal">Not included</strong>
+            </div>
+            <div class="order-grand-total">
+              <span>Total Price</span>
+              <strong id="orderTotal">-</strong>
+            </div>
+          </div>
+
+          <div class="order-actions">
+            <button class="button secondary" type="button" id="backToManufacturers">Back</button>
+            <button class="button primary" type="submit">Confirm Order</button>
+          </div>
+        </div>
+
+        <div class="verify-step" data-verify-step="success">
+          <div class="order-success-page" role="status" aria-live="polite">
+            <span class="order-success-tick" aria-hidden="true">&#10003;</span>
+            <h3>Your order is confirmed.</h3>
+            <p>Our team contact you very soon.</p>
+          </div>
         </div>
 
         <p class="form-message" id="priceCompareMessage" role="status" aria-live="polite"></p>
