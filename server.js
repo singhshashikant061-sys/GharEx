@@ -411,6 +411,13 @@ const handleNearbyManufacturersRoute = async (req, res, url) => {
 const handleApi = async (req, res, url) => {
   if (req.method === "OPTIONS") return sendJson(res, 204, {});
 
+  if (req.method === "GET" && url.pathname === "/api/health") {
+    return sendJson(res, 200, {
+      ok: true,
+      storage: MONGODB_URI ? "mongodb" : "memory"
+    });
+  }
+
   if (url.pathname === "/api/requests") {
     return handleRequestsRoute(req, res);
   }

@@ -146,6 +146,14 @@ const sendServiceRequest = async (url, payload) => {
 
 const getServiceRequestUrls = () => {
   const urls = [API_URL];
+  const isLocalPage =
+    window.location.protocol === "file:" ||
+    ["localhost", "127.0.0.1", ""].includes(window.location.hostname);
+
+  if (!isLocalPage) {
+    return urls;
+  }
+
   const localUrls = ["http://localhost:10000/api/requests", "http://127.0.0.1:10000/api/requests"];
 
   localUrls.forEach((url) => {
