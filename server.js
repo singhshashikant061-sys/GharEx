@@ -3,11 +3,39 @@ require("dns").setDefaultResultOrder("ipv4first");
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 const mongoose = require("mongoose");
+
+const loadEnvFile = () => {
+  const envPath = path.join(__dirname, ".env");
+  if (!fs.existsSync(envPath)) return;
+
+  const lines = fs.readFileSync(envPath, "utf8").split(/\r?\n/);
+
+  lines.forEach((line) => {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) return;
+
+    const equalsIndex = trimmed.indexOf("=");
+    if (equalsIndex === -1) return;
+
+    const key = trimmed.slice(0, equalsIndex).trim();
+    const value = trimmed.slice(equalsIndex + 1).trim().replace(/^["']|["']$/g, "");
+
+    if (key && process.env[key] === undefined) {
+      process.env[key] = value;
+    }
+  });
+};
+
+loadEnvFile();
 
 const PORT = process.env.PORT || 10000;
 const ADMIN_KEY = process.env.ADMIN_KEY || "change-this-admin-key";
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = process.env.MONGODB_URI || process.env.MONGO_URL;
+const ALLOW_MEMORY_STORAGE = process.env.ALLOW_MEMORY_STORAGE === "true";
+const DATA_DIR = path.join(__dirname, "data");
+const REQUESTS_FILE = path.join(DATA_DIR, "requests.json");
 
 const allowedStatuses = new Set(["new", "contacted", "in_progress", "completed", "cancelled"]);
 const mimeTypes = {
@@ -126,7 +154,7 @@ const fallbackManufacturers = [
 
 const connectMongo = async () => {
   if (!MONGODB_URI) {
-    throw new Error("MONGODB_URI environment variable is required");
+    throw new Error("MONGODB_URI or MONGO_URL environment variable is required");
   }
 
   if (mongoose.connection.readyState === 1) return;
@@ -135,6 +163,22 @@ const connectMongo = async () => {
 };
 
 const localRequests = [];
+
+const readFileRequests = async () => {
+  try {
+    const content = await fs.promises.readFile(REQUESTS_FILE, "utf8");
+    const requests = JSON.parse(content);
+    return Array.isArray(requests) ? requests : [];
+  } catch (error) {
+    if (error.code === "ENOENT") return [];
+    throw error;
+  }
+};
+
+const writeFileRequests = async (requests) => {
+  await fs.promises.mkdir(DATA_DIR, { recursive: true });
+  await fs.promises.writeFile(REQUESTS_FILE, `${JSON.stringify(requests, null, 2)}\n`);
+};
 
 const formatRequest = (request) => {
   const item = request.toObject ? request.toObject() : request;
@@ -149,7 +193,8 @@ const formatRequest = (request) => {
 
 const getRequests = async (filters = {}) => {
   if (!MONGODB_URI) {
-    return localRequests.filter((request) => {
+    const requests = ALLOW_MEMORY_STORAGE ? localRequests : await readFileRequests();
+    return requests.filter((request) => {
       if (filters.status && request.status !== filters.status) return false;
       if (filters.requestType && request.requestType !== filters.requestType) return false;
       return true;
@@ -169,13 +214,20 @@ const saveRequest = async (request) => {
   if (!MONGODB_URI) {
     const now = new Date().toISOString();
     const savedRequest = {
-      id: `${Date.now()}-${localRequests.length + 1}`,
+      id: crypto.randomUUID(),
       ...request,
       createdAt: now,
       updatedAt: now
     };
 
-    localRequests.unshift(savedRequest);
+    if (ALLOW_MEMORY_STORAGE) {
+      localRequests.unshift(savedRequest);
+    } else {
+      const requests = await readFileRequests();
+      requests.unshift(savedRequest);
+      await writeFileRequests(requests);
+    }
+
     return savedRequest;
   }
 
@@ -186,11 +238,17 @@ const saveRequest = async (request) => {
 
 const updateRequestStatus = async (id, status) => {
   if (!MONGODB_URI) {
-    const request = localRequests.find((item) => item.id === id);
+    const requests = ALLOW_MEMORY_STORAGE ? localRequests : await readFileRequests();
+    const request = requests.find((item) => item.id === id);
     if (!request) return null;
 
     request.status = status;
     request.updatedAt = new Date().toISOString();
+
+    if (!ALLOW_MEMORY_STORAGE) {
+      await writeFileRequests(requests);
+    }
+
     return request;
   }
 
@@ -239,6 +297,19 @@ const sanitizeText = (value) => (typeof value === "string" ? value.trim() : "");
 const sanitizeNumber = (value) => {
   const number = Number(value);
   return Number.isFinite(number) ? number : null;
+};
+
+const getPublicApiError = (error) => {
+  const message = error?.message || "";
+  const isMongoConnectionError =
+    error?.name?.startsWith("Mongo") ||
+    /querySrv|ENOTFOUND|ECONNREFUSED|ETIMEDOUT|server selection|MONGODB_URI|MONGO_URL/i.test(message);
+
+  if (isMongoConnectionError) {
+    return "Request could not be submitted right now. Please check the MongoDB connection and try again.";
+  }
+
+  return message || "Server error";
 };
 
 const toRadians = (degrees) => degrees * (Math.PI / 180);
@@ -414,7 +485,7 @@ const handleApi = async (req, res, url) => {
   if (req.method === "GET" && url.pathname === "/api/health") {
     return sendJson(res, 200, {
       ok: true,
-      storage: MONGODB_URI ? "mongodb" : "memory"
+      storage: MONGODB_URI ? "mongodb" : ALLOW_MEMORY_STORAGE ? "memory" : "file"
     });
   }
 
@@ -487,10 +558,20 @@ const server = http.createServer(async (req, res) => {
 
     serveStatic(req, res, url);
   } catch (error) {
-    sendJson(res, 500, { error: error.message || "Server error" });
+    console.error("API error:", error);
+    sendJson(res, 500, { error: getPublicApiError(error) });
   }
 });
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(
+    `Storage: ${
+      MONGODB_URI
+        ? "mongodb"
+        : ALLOW_MEMORY_STORAGE
+          ? "memory"
+          : "file (data/requests.json)"
+    }`
+  );
 });

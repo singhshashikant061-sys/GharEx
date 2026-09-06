@@ -9,7 +9,7 @@ ADMIN_KEY="your-secret-key" node server.js
 Default local URL:
 
 ```text
-http://localhost:3000
+http://localhost:10000
 ```
 
 ## Submit Request
@@ -74,5 +74,26 @@ new, contacted, in_progress, completed, cancelled
 
 ## Database
 
-The server stores requests in MongoDB using the `ServiceRequest` Mongoose model.
-Set `MONGO_URL` before starting the server to use a different MongoDB database.
+The server stores requests in MongoDB when a connection string is provided.
+Set `MONGODB_URI` or `MONGO_URL` before starting the server:
+
+```bash
+MONGODB_URI="mongodb://127.0.0.1:27017/gharex" node server.js
+```
+
+On Windows PowerShell:
+
+```powershell
+$env:MONGODB_URI="mongodb://127.0.0.1:27017/gharex"; node server.js
+```
+
+You can also create a local `.env` file:
+
+```text
+MONGODB_URI=mongodb://127.0.0.1:27017/gharex
+```
+
+If neither variable is set, requests are saved locally in `data/requests.json`.
+For temporary non-persistent testing without MongoDB or the JSON file, set `ALLOW_MEMORY_STORAGE=true`.
+
+Orders are saved through the `Request` Mongoose model, so MongoDB stores them in the `requests` collection.

@@ -128,24 +128,6 @@ a {
   min-height: 64px;
 }
 
-.nav-links .price-compare-link {
-  min-height: 38px;
-  padding: 0 14px;
-  border-radius: 8px;
-  background: #ffd84d;
-  color: #10243e;
-  box-shadow: 0 10px 24px rgba(255, 216, 77, 0.24);
-}
-
-.nav-links .price-compare-link:hover {
-  color: #10243e;
-  background: #ffcc1f;
-}
-
-.nav-links .price-compare-link::after {
-  display: none;
-}
-
 .nav-links a::after {
   content: "";
   position: absolute;

@@ -591,6 +591,8 @@
 
     const getLocation = (request) => request.deliveryLocation || request.location || "-";
 
+    const getRequirement = (request) => request.requirement || request.message || request.products || request.material || "-";
+
     const getMaterial = (request) => request.material || request.brickType || request.products || "-";
 
     const renderBadge = (status) => {
@@ -619,7 +621,7 @@
     const getFilteredRequests = () => {
       return allRequests.filter((request) => {
         const matchesStatus = activeStatus === "all" || request.status === activeStatus;
-        const searchableText = `${request.name || ""} ${request.phone || ""}`.toLowerCase();
+        const searchableText = `${request.name || ""} ${request.phone || ""} ${request.requirement || ""} ${request.message || ""} ${request.material || ""} ${request.products || ""} ${request.location || ""}`.toLowerCase();
         const matchesSearch = !searchTerm || searchableText.includes(searchTerm);
 
         return matchesStatus && matchesSearch;
@@ -636,6 +638,7 @@
                 <span class="subtext">${escapeHtml(request.phone || "-")}</span>
               </td>
               <td>${escapeHtml(request.requestType || "-")}</td>
+              <td>${escapeHtml(getRequirement(request))}</td>
               <td>${escapeHtml(getMaterial(request))}</td>
               <td>${escapeHtml(request.quantity ?? "-")}</td>
               <td>${escapeHtml(getLocation(request))}</td>
@@ -661,6 +664,7 @@
               </div>
               <div class="details">
                 <div class="detail-row"><span>Request Type</span><span>${escapeHtml(request.requestType || "-")}</span></div>
+                <div class="detail-row"><span>Requirement</span><span>${escapeHtml(getRequirement(request))}</span></div>
                 <div class="detail-row"><span>Material</span><span>${escapeHtml(getMaterial(request))}</span></div>
                 <div class="detail-row"><span>Quantity</span><span>${escapeHtml(request.quantity ?? "-")}</span></div>
                 <div class="detail-row"><span>Location</span><span>${escapeHtml(getLocation(request))}</span></div>
@@ -697,6 +701,7 @@
                 <tr>
                   <th>Name / Phone</th>
                   <th>Request Type</th>
+                  <th>Requirement</th>
                   <th>Material</th>
                   <th>Quantity</th>
                   <th>Location</th>

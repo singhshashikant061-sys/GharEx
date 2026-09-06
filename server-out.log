@@ -1,1 +1,7 @@
 Server running on port 10000
+Storage: file (data/requests.json)
+URL: /api/health METHOD: GET
+URL: / METHOD: GET
+URL: /api/requests METHOD: POST
+URL: /api/health METHOD: GET
+URL: / METHOD: GET
