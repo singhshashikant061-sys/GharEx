@@ -5,6 +5,13 @@ const leadModalForm = document.querySelector("#leadModalForm");
 const leadModalMessage = document.querySelector("#leadModalMessage");
 const modalOpenButtons = document.querySelectorAll("[data-modal-open]");
 const modalCloseButtons = document.querySelectorAll("[data-modal-close]");
+const priceCompareModal = document.querySelector("#price-compare-modal");
+const priceCompareOpenButtons = document.querySelectorAll("[data-price-compare-open]");
+const priceCompareCloseButtons = document.querySelectorAll("[data-price-compare-close]");
+const priceSort = document.querySelector("#priceSort");
+const brickGradeFilter = document.querySelector("#brickGradeFilter");
+const topRatedFilter = document.querySelector("#topRatedFilter");
+const manufacturerPriceList = document.querySelector("#manufacturerPriceList");
 const registrationForm = document.querySelector("#registrationForm");
 const registrationType = document.querySelector("#registrationType");
 const registrationTitle = document.querySelector("#registrationTitle");
@@ -19,6 +26,14 @@ const registrationPhoneInput = registrationForm?.querySelector("[name='phone']")
 const registrationLocationInput = registrationForm?.querySelector("[name='location']");
 const registrationButton = registrationForm?.querySelector("button[type='submit']");
 const API_URL = "/api/requests";
+const manufacturerPrices = [
+  { name: "Guddu Singh Bricks", location: "Mohali", brickType: "Red Clay Bricks", grade: "1", price: 8400, rating: 4.8 },
+  { name: "Chandigarh Brick Works", location: "Chandigarh", brickType: "Red Clay Bricks", grade: "2", price: 7600, rating: 4.5 },
+  { name: "Punjab Construction Bricks", location: "Kharar", brickType: "Machine Made Bricks", grade: "1", price: 8900, rating: 4.9 },
+  { name: "Tricity Brick Suppliers", location: "Zirakpur", brickType: "Wire Cut Bricks", grade: "1", price: 9200, rating: 4.7 },
+  { name: "Mohali Red Brick Depot", location: "Mohali", brickType: "Red Clay Bricks", grade: "3", price: 6800, rating: 4.2 },
+  { name: "North India Brick House", location: "Panchkula", brickType: "Machine Made Bricks", grade: "2", price: 7950, rating: 4.6 }
+];
 
 const getPhoneDigits = (phone) => String(phone || "").replace(/\D/g, "");
 const getSelectedProducts = (form) => {
@@ -180,6 +195,75 @@ const closeLeadModal = () => {
   document.body.classList.remove("modal-open");
 };
 
+const formatPrice = (price) =>
+  new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0
+  }).format(price);
+
+const openPriceCompareModal = () => {
+  if (!priceCompareModal) return;
+  priceCompareModal.classList.add("is-open");
+  priceCompareModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  if (priceSort) priceSort.value = "low-high";
+  if (brickGradeFilter) brickGradeFilter.value = "all";
+  if (topRatedFilter) topRatedFilter.checked = false;
+  renderManufacturerPrices();
+};
+
+const closePriceCompareModal = () => {
+  if (!priceCompareModal) return;
+  priceCompareModal.classList.remove("is-open");
+  priceCompareModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+};
+
+const renderManufacturerPrices = () => {
+  if (!manufacturerPriceList) return;
+
+  const selectedGrade = brickGradeFilter?.value || "all";
+  const sortOrder = priceSort?.value || "low-high";
+  const topRatedOnly = Boolean(topRatedFilter?.checked);
+  const prices = manufacturerPrices
+    .filter((item) => selectedGrade === "all" || item.grade === selectedGrade)
+    .filter((item) => !topRatedOnly || item.rating >= 4.7)
+    .sort((first, second) => (sortOrder === "high-low" ? second.price - first.price : first.price - second.price));
+
+  if (!prices.length) {
+    manufacturerPriceList.innerHTML = '<p class="compare-empty">No manufacturer prices found for this selection.</p>';
+    return;
+  }
+
+  manufacturerPriceList.innerHTML = prices
+    .map(
+      (item) => `
+        <article class="manufacturer-card">
+          <div>
+            <h4>${item.name}</h4>
+            <p>${item.location} &middot; ${item.brickType} &middot; ${item.rating}/5 rated</p>
+          </div>
+          <div class="manufacturer-price">
+            <strong>${formatPrice(item.price)}</strong>
+            <span>per 1000 bricks</span>
+          </div>
+          <span class="grade-badge">No. ${item.grade} Grade</span>
+          <button class="manufacturer-buy" type="button" data-manufacturer="${item.name}">Buy</button>
+        </article>`
+    )
+    .join("");
+
+  manufacturerPriceList.querySelectorAll("[data-manufacturer]").forEach((button) => {
+    button.addEventListener("click", () => {
+      closePriceCompareModal();
+      openLeadModal();
+      const messageBox = leadModalForm?.querySelector("[name='message']");
+      if (messageBox) messageBox.value = `I want to buy bricks from ${button.dataset.manufacturer}.`;
+    });
+  });
+};
+
 modalOpenButtons.forEach((button) => {
   button.addEventListener("click", (event) => {
     event.preventDefault();
@@ -191,9 +275,28 @@ modalCloseButtons.forEach((button) => {
   button.addEventListener("click", closeLeadModal);
 });
 
+priceCompareOpenButtons.forEach((button) => {
+  button.addEventListener("click", (event) => {
+    event.preventDefault();
+    openPriceCompareModal();
+  });
+});
+
+priceCompareCloseButtons.forEach((button) => {
+  button.addEventListener("click", closePriceCompareModal);
+});
+
+[priceSort, brickGradeFilter, topRatedFilter].forEach((control) => {
+  control?.addEventListener("change", renderManufacturerPrices);
+});
+
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && leadModal?.classList.contains("is-open")) {
     closeLeadModal();
+  }
+
+  if (event.key === "Escape" && priceCompareModal?.classList.contains("is-open")) {
+    closePriceCompareModal();
   }
 });
 
