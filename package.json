@@ -1,12 +1,13 @@
 {
   "name": "gharex",
-  "version": "1.0.0",
   "private": true,
+  "version": "1.0.0",
   "scripts": {
-    "start": "node server.js"
+    "dev": "wrangler pages dev . --port 8788",
+    "build": "echo 'Cloudflare Pages build complete'",
+    "deploy": "wrangler pages deploy ."
   },
-  "dependencies": {
-    "mongodb": "^7.2.0",
-    "mongoose": "^9.6.1"
+  "devDependencies": {
+    "wrangler": "^3.105.1"
   }
 }

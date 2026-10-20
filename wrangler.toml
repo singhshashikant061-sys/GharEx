@@ -1,0 +1,10 @@
+name = "gharex"
+compatibility_date = "2025-01-01"
+pages_build_output_dir = "."
+
+[[kv_namespaces]]
+binding = "REQUESTS_KV"
+id = "YOUR_KV_NAMESPACE_ID"
+
+# Set these in Cloudflare Pages project settings instead of committing secrets:
+# ADMIN_KEY = "your-admin-key"
