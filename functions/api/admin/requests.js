@@ -11,16 +11,12 @@ const json = (data, status = 200, extraHeaders = {}) =>
   });
 
 const getRequestStore = async (env) => {
-  if (env.REQUESTS_KV) {
-    const raw = await env.REQUESTS_KV.get("requests");
-    return raw ? JSON.parse(raw) : [];
+  if (!env.REQUESTS_KV) {
+    return [];
   }
 
-  if (!globalThis.__gharex_requests) {
-    globalThis.__gharex_requests = [];
-  }
-
-  return globalThis.__gharex_requests;
+  const raw = await env.REQUESTS_KV.get("requests");
+  return raw ? JSON.parse(raw) : [];
 };
 
 const isAdmin = (request, env) => {

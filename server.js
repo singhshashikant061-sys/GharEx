@@ -1,4 +1,4 @@
 // Legacy server.js intentionally disabled.
-// This project is now hosted on Cloudflare Pages as a static frontend with Cloudflare Functions.
-// Render and MongoDB are not used in this deployment.
+// This repository is now built for Cloudflare Pages + Functions.
+// Render, MongoDB, and Node server runtime are not used in production.
 console.log("GharEx is running as a Cloudflare Pages static site. The legacy Node/Mongo server is disabled.");

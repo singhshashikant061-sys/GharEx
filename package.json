@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "wrangler pages dev . --port 8788",
-    "build": "echo 'Cloudflare Pages build complete'",
+    "build": "echo \"Cloudflare Pages build complete\"",
     "deploy": "wrangler pages deploy ."
   },
   "devDependencies": {

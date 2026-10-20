@@ -56,25 +56,18 @@ const buildRequest = (payload) => {
 };
 
 const getRequestStore = async (env) => {
-  if (env.REQUESTS_KV) {
-    const raw = await env.REQUESTS_KV.get("requests");
-    return raw ? JSON.parse(raw) : [];
+  if (!env.REQUESTS_KV) {
+    return [];
   }
 
-  if (!globalThis.__gharex_requests) {
-    globalThis.__gharex_requests = [];
-  }
-
-  return globalThis.__gharex_requests;
+  const raw = await env.REQUESTS_KV.get("requests");
+  return raw ? JSON.parse(raw) : [];
 };
 
 const saveRequestStore = async (env, requests) => {
   if (env.REQUESTS_KV) {
     await env.REQUESTS_KV.put("requests", JSON.stringify(requests));
-    return;
   }
-
-  globalThis.__gharex_requests = requests;
 };
 
 const getBody = async (request) => {
@@ -91,10 +84,10 @@ export async function onRequest({ request, env }) {
   }
 
   if (request.method === "GET") {
+    const url = new URL(request.url);
+    const status = sanitizeText(url.searchParams.get("status"));
+    const requestType = sanitizeText(url.searchParams.get("type"));
     const store = await getRequestStore(env);
-    const params = new URL(request.url).searchParams;
-    const status = sanitizeText(params.get("status"));
-    const requestType = sanitizeText(params.get("type"));
 
     const requests = store.filter((item) => {
       if (status && item.status !== status) return false;

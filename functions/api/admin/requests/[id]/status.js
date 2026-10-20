@@ -13,28 +13,19 @@ const json = (data, status = 200, extraHeaders = {}) =>
 const allowedStatuses = new Set(["new", "contacted", "in_progress", "completed", "cancelled"]);
 
 const getRequestStore = async (env) => {
-  if (env.REQUESTS_KV) {
-    const raw = await env.REQUESTS_KV.get("requests");
-    return raw ? JSON.parse(raw) : [];
+  if (!env.REQUESTS_KV) {
+    return [];
   }
 
-  if (!globalThis.__gharex_requests) {
-    globalThis.__gharex_requests = [];
-  }
-
-  return globalThis.__gharex_requests;
+  const raw = await env.REQUESTS_KV.get("requests");
+  return raw ? JSON.parse(raw) : [];
 };
 
 const saveRequestStore = async (env, requests) => {
   if (env.REQUESTS_KV) {
     await env.REQUESTS_KV.put("requests", JSON.stringify(requests));
-    return;
   }
-
-  globalThis.__gharex_requests = requests;
 };
-
-const sanitizeText = (value) => (typeof value === "string" ? value.trim() : "");
 
 const isAdmin = (request, env) => {
   const adminKey = env.ADMIN_KEY || "change-this-admin-key";
@@ -56,7 +47,7 @@ export async function onRequest({ request, env, params }) {
 
   const requestId = params.id;
   const payload = await request.json().catch(() => ({}));
-  const status = sanitizeText(payload.status);
+  const status = String(payload.status || "").trim();
 
   if (!allowedStatuses.has(status)) {
     return json({ error: "status must be new, contacted, in_progress, completed, or cancelled" }, 400);
