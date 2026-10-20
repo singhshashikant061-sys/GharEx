@@ -1,7 +1,2 @@
-name = "gharex"
-compatibility_date = "2025-01-01"
-pages_build_output_dir = "."
-
-[[kv_namespaces]]
-binding = "REQUESTS_KV"
-id = "PASTE_YOUR_KV_NAMESPACE_ID_HERE"
+# Cloudflare config removed.
+# This project is deployed on Vercel, not Cloudflare Pages.

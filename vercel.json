@@ -1,0 +1,40 @@
+export default async function handler(req, res) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, x-admin-key");
+  res.setHeader("Access-Control-Allow-Methods", "PATCH, OPTIONS");
+
+  if (req.method === "OPTIONS") {
+    return res.status(204).end();
+  }
+
+  const adminKey = req.headers["x-admin-key"] || req.headers["x-admin-key"];
+  const expectedKey = process.env.ADMIN_KEY || "change-this-admin-key";
+
+  if (adminKey !== expectedKey) {
+    return res.status(401).json({ error: "invalid admin key" });
+  }
+
+  if (req.method !== "PATCH") {
+    return res.status(404).json({ error: "API route not found" });
+  }
+
+  const payload = req.body || {};
+  const status = String(payload.status || "").trim();
+  const requestId = req.query.id;
+
+  if (!requestId) {
+    return res.status(400).json({ error: "request id is required" });
+  }
+
+  const store = globalThis.__gharex_requests || [];
+  const request = store.find((item) => item.id === requestId);
+
+  if (!request) {
+    return res.status(404).json({ error: "request not found" });
+  }
+
+  request.status = status;
+  request.updatedAt = new Date().toISOString();
+
+  return res.status(200).json({ request });
+}
